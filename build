@@ -1,0 +1,8 @@
+#!/bin/bash 
+mkdir -p ./out
+
+ATS_SOURCE="./src/common.dats ./src/main.dats ./src/shader_utils.dats"
+C_SOURCE="./src/C/util.c"
+
+patscc -o ./out/exe -Wl,-rpath,'$ORIGIN' $C_SOURCE $ATS_SOURCE -I./src/H -L./lib -I./include -DATS_MEMALLOC_GCBDW -D_ATS_GCATS -lglfw -lglad -lrt -lgc -D_GNU_SOURCE -cleanaft
+
