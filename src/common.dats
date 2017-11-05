@@ -192,6 +192,12 @@ end
 //symintr map
 overload map with list0_map_clo
 
+//symintr <$>
+infixl <#
+infixl <*
+
+overload <# with list0_map_clo
+overload <* with list0_map_fun
 
 symintr foreach
 overload foreach with list0_foreach_fun

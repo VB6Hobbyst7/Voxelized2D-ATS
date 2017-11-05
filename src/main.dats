@@ -33,38 +33,33 @@ in
 fun on_resize(win:GLFWwindow, width:int, height:int) : void = 
    glViewport(0,0,width,height)
 
-fn initGL{l : addr}() : void = let
-    val _ = glfwInit()
-    val _ = glfwWindowHint($extval(int,"GLFW_CONTEXT_VERSION_MAJOR"),3)
-    val _ = glfwWindowHint($extval(int,"GLFW_CONTEXT_VERSION_MINOR"),3)
-    val _ = glfwWindowHint($extval(int,"GLFW_OPENGL_PROFILE"),
-    $extval(int, "GLFW_OPENGL_CORE_PROFILE"))
+fn initGL{l : addr}() : void = {
+    @glfwInit()
+    @glfwWindowHint($extval(int,"GLFW_CONTEXT_VERSION_MAJOR"),3)
+    @glfwWindowHint($extval(int,"GLFW_CONTEXT_VERSION_MINOR"),3)
+    @glfwWindowHint($extval(int,"GLFW_OPENGL_PROFILE"),
+     $extval(int, "GLFW_OPENGL_CORE_PROFILE"))
     
     val null_ = $UN.cast{ptr}(0)
     
     val win_handle = glfwCreateWindow(def_win_width,def_win_height, "win", null_, null_)
     
-    val _ = $UN.ptr0_set<GLFWwindow>($extval(ptr, "&win_handle"), win_handle)
+    @ $UN.ptr0_set<GLFWwindow>($extval(ptr, "&win_handle"), win_handle)
     
     
-    val () = glfwMakeContextCurrent win_handle
+    @glfwMakeContextCurrent win_handle
     
-    val _ = if $UN.cast{ptr}(win_handle) = null_ then
+    @if $UN.cast{ptr}(win_handle) = null_ then
        print "Error initializing window\n"
        
-    val _ = gladLoadGLLoader()
-    val () = glfwSwapInterval(1)
+    @gladLoadGLLoader()
+    @glfwSwapInterval(1)
        
     
     
-    val _ = glfwSetFramebufferSizeCallback(win_handle, on_resize)
+    @glfwSetFramebufferSizeCallback(win_handle, on_resize)
     
-    
-     
-    
-  in
-    
-  end
+}    
 
  
 fn initGame() : void = 
@@ -74,27 +69,28 @@ fn initGame() : void =
   
   
   val files_list = ptr0_to_list0<string>(files.names, files.count)
-  val names_list = list0_map_fun(files_list, drop_file_extension)
+  val names_list = files_list <* drop_file_extension
   val unique_names_list = list0_remove_duplicates(names_list, eq_string)
   
-  val () = println!("found these shaders:")
-  val () = unique_names_list \foreach println
+  @ println!("found these shaders:")
+  @ unique_names_list \foreach println
   
   
-  val programs = list0_map_clo<string><int>(unique_names_list, lam (x : string) => let 
+  val programs = unique_names_list <# (
+  lam (x : string) => let
     val pathVert = path ++ x ++ ".vert"
     val pathFrag = path ++ x ++ ".frag"
   in
     loadShader(pathVert, pathFrag)
   end
-  )
+                                       )
   
   
   
   
 }
  
-fn loop () : void = let
+fn loop () : void = {
 
   val win_handle = get_win_handle()
 
@@ -105,7 +101,7 @@ fn loop () : void = let
     else
        () 
     
-  val () = cwhile(lam () => not (glfwWindowShouldClose win_handle),
+  @cwhile(lam () => not (glfwWindowShouldClose win_handle),
     lam () =>
        let
 
@@ -124,31 +120,25 @@ fn loop () : void = let
      end
   )
   
-  in
-    glfwTerminate()
-  end
-    
+  @glfwTerminate()
+  
+}    
  
 
-fn runVoxelized() : void = let
-  val _ = print "running...\n"
+fn runVoxelized() : void = {
+  @print "running...\n"
   
   
-  val _ = initGL()
-  val _ = initGame()
-  val _ = loop ()
+  @initGL()
+  @initGame()
+  @loop ()
   
-  val _ = print "done\n"
-  
-  in 
-     
-  end
+  @print "done\n"
   
   
+}
   
-end //end of [local]
-  
-  
+end  //end of [local]
   
   
   

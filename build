@@ -1,8 +1,15 @@
 #!/bin/bash 
 mkdir -p ./out
 
+VAL_UNIT_SYM="@"
 ATS_SOURCE="./src/common.dats ./src/main.dats ./src/shader_utils.dats"
-C_SOURCE="./src/C/util.c"
+C_SOURCE="./src/C/glad.c ./src/C/util.c"
 
-patscc -o ./out/exe -Wl,-rpath,'$ORIGIN' $C_SOURCE $ATS_SOURCE -I./src/H -L./lib -I./include -DATS_MEMALLOC_GCBDW -D_ATS_GCATS -lglfw -lglad -lrt -lgc -D_GNU_SOURCE -cleanaft
+g++ -o ./out/find_and_replace ./src/C/find_and_replace.cpp
 
+ATS_SOURCE_VUS=$(./out/find_and_replace $VAL_UNIT_SYM "val _ =" _vus $ATS_SOURCE)
+
+
+patscc -o ./out/exe -Wl,-rpath,'$ORIGIN' $C_SOURCE $ATS_SOURCE_VUS -I./src/H -L./lib -I./include -DATS_MEMALLOC_GCBDW -D_ATS_GCATS -lglfw -lrt -lgc -ldl -D_GNU_SOURCE -cleanaft
+
+rm -rf $ATS_SOURCE_VUS
